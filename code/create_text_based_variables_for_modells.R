@@ -35,11 +35,14 @@ sphrases <- prep_stopwords(c("jobbik magyarországért mozgalom","magyar szocial
                              "felmerül kérdés","valamilyen szinten","milliárd forint","forint áll rendelkezésre","kérdésemre adott válaszban",
                              "felhívni figyelmet","kormány figyelmét","felhívni","egyéni képviselői indítvány",
                              "általános vitában elmond*","részt vesz vitában","általános vita","általános vitában","lehetőséget ad",
-                             "ellenzéki képviselők","kormánypárti képviselők"))
+                             "ellenzéki képviselők","kormánypárti képviselők","teljesen világos","várom válaszát","őszintén szólva",
+                             "tisztelettel tájékoztatom","kdnp-frakció támogatja","képviselőcsoportja támogatja","elhangzottakra tekintettel",
+                             "kdnp támogatja","illeti szó","részt vesz vitában","miniszter úr","fidesz-frakcióhoz hasonlóan","fidesz-frakció",
+                             "illeti a szó parancsoljon","öné a szó","hölgyeim és uraim","jelen pillanatban"))
 
 swords <- prep_stopwords(append(scan("data/input/stopwords-hu.txt", what="", sep="\n"),
-                                list("tisztelt","képviselő","hát","ur","t","ha","en",
-                                     "köszönöm","szót","elnök","úr","képviselőtársaim","is","képviselőtársam","képviselőtárs",
+                                list("tisztelt","képviselő","hát","ur","t","ha","en", "parancsoljon",
+                                     "köszönöm","szót","elnök","úr","képviselőtársaim","is","képviselőtársam","képviselőtárs","képviselőcsoportja",
                                      "összegző","módosítás","jelentés","törvényjavaslat","bizottság","házszabály","országgyűlés",
                                      "dr","támogadni","tudjuk","fogjuk","államtitkár","módon","sajnálatos","nyilvánvaló","támogatni","tudjuk",
                                      "fogjuk","államtitkár","törvényjavaslat","törvényjavaslatot","törvény","módósításáról","megtisztelő",
@@ -54,12 +57,13 @@ parl_tokens <- tokens(corpus,
                       remove_numbers = T,
                       remove_separators = T) %>% 
                tokens_tolower() %>% 
-               tokens_select(pattern = swords, selection = "remove") %>% 
+               tokens_select(pattern = phrase(sphrases), selection = "remove") %>% 
                tokens_select(pattern = phrase(names), selection = "remove") %>% 
-               tokens_select(pattern = phrase(sphrases), selection = "remove")
+               tokens_select(pattern = swords, selection = "remove")
+
+parl_tokens %>% write_rds("data/output/parl_tokens.rds")
 
 rm(parl_text)
-
 
 #stemming
 parl_tokens <- parl_tokens %>% tokens_wordstem(language = 'hu')
@@ -73,19 +77,18 @@ bi_dtm <- dfm(toks_2gram, groups = "side") %>%
 
 bigram_keyness <- bi_dtm %>% textstat_keyness(target=1, measure="chi2")
 
-bigram_keyness <- rbind(bigram_keyness %>% head(500),bigram_keyness %>% tail(500))
-
 bigram_keyness %>% write_csv("data/output/bigramms.csv")
 
 wordplot <- textplot_keyness(bigram_keyness, n=20L, margin=0.15)
-jpeg("figures/chi2_bigrams.png",width = 1000, height = 700)
-wordplot
-dev.off()
+#jpeg("figures/chi2_bigrams.png",width = 1000, height = 700)
+#wordplot
+#dev.off()
 
 # create wordcloud comparison
 
-dfm_group(bi_dtm, 'side') %>% 
-  textplot_wordcloud(comparison = TRUE)
+textplot_wordcloud(dfm_group(bi_dtm, 'side'), comparison = TRUE,max_words = 100)
+
+dev.off()
 
 
 # trigramm 
@@ -100,9 +103,7 @@ trigram_keyness <- dtm_3gram %>% textstat_keyness(target=1,measure="chi2")
 trigram_keyness %>% write_csv("data/output/trigramms.csv")
 
 wordplot <- textplot_keyness(trigram_keyness,n=30,min_count = 5,margin=0.15)
-jpeg("figures/chi2_trigrams.png",width = 1000, height = 700)
-wordplot
-dev.off()
+
 
 dfm_group(dtm_3gram, 'side') %>% 
   textplot_wordcloud(comparison = TRUE)
@@ -156,12 +157,12 @@ parl_tokens <- tokens(corpus,
   tokens_wordstem(language = 'hu') %>%
   tokens_ngrams(n=2:3) 
 
-parl_tokens %>% write_rds("data/output/parl_tokens.rds")
+parl_tokens %>% write_rds("data/output/parl_bigrams_trigrams_tokens.rds")
 
 #########################################################################################
 #     read tokenized rds file here
 
-parl_tokens <- read_rds("data/output/parl_tokens.rds")
+parl_tokens <- read_rds("data/output/parl_bigrams_trigrams_tokens.rds")
 
 p <- read_csv("data/output/p.csv")
 selected_ps = prep_stopwords(p %>% select(p))
@@ -179,7 +180,28 @@ rm(list=ls())
 #########################################################################################
 #         NOTE: it takes a lot of time to run, read tokenized rds file below
 
-df_media <- read_rds("data/output/media_belfold.rds")
+df_media <- read_csv("data/input/newspaper_text_2020.csv")
+
+df_media$category <- tolower(df_media$category)
+
+df_media <- df_media %>% 
+  mutate(category = gsub("á", "a", category)) %>% 
+  mutate(category = gsub("ö", "o", category)) %>%
+  mutate(category = gsub("ü", "u", category))  %>%
+  mutate(category = gsub("é", "e", category))  %>%
+  mutate(category = gsub("fn", "gazdasag", category)) %>% # fn is gazdasag in 24.hu
+  mutate(category = gsub("egeszsegugy", "egeszseg", category)) %>%
+  mutate(category = gsub("belföld", "belfold", category)) %>%
+  mutate(category = gsub("itthon", "belfold", category)) %>% #origo
+  mutate(category = gsub("nagyvilag", "kulfold", category)) %>% #origo
+  mutate(category = gsub("politika", "belfold", category)) %>% # politika is local politics at 444
+  mutate(category = gsub("ketharmad", "belfold", category)) %>% # 888
+  mutate(category = gsub("amerika-london-parizs", "kulfold", category))  # 888
+
+df_media <- df_media %>% filter(category == "belfold") %>% drop_na(text)
+
+# write this filtered text file list to rds, because this will be used in other models too
+df_media %>% write_rds("data/output/media_belfold.rds")
 
 corpus <- corpus(df_media %>% select(text))
 docvars(corpus, "page") <- df_media %>% select("page")
@@ -201,6 +223,7 @@ media_tokens %>% write_rds("data/output/media_tokens.rds")
 
 #########################################################################################
 #     Rread tokenized rds file here
+rm(list=ls())
 
 media_tokens <- read_rds("data/output/media_tokens.rds")
 
