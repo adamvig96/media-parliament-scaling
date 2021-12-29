@@ -1,6 +1,7 @@
-.ipynb_checkpoints
-data
-gentzkow_shapiro_2010
-old
+data/
+figures/
+
+# R
+renv/
 .Rhistory
-.Rproj.user
+.Rprofile
