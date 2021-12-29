@@ -1,38 +1,54 @@
 ###########################################################################################
 
 # This code:
-# 1. select 1000 bigrams and 1000 trigrams with highest ch2 score of predicting a speaker is
-# opposition or government.
+# 1. select 1000 bigrams and 1000 trigrams with highest ch2 score of predicting 
+# whether a speaker is opposition or government.
 # 2. Based on these phrases, it trains a wordscore model, to predict opp-govt
 
 ###########################################################################################
 
-
+renv::activate()
 rm(list=ls())
 
 library(dplyr)
 library(ggplot2)
 library(quanteda)
-require(quanteda.textmodels)
+library(quanteda.textmodels)
+library(quanteda.textstats)
+library(quanteda.textplots)
 library(tidyverse)
 library(gofastr)
 
-names <- prep_stopwords(read_csv("data/input/representative_names_2018-2020.csv")$Név %>% tolower()) #%>% str_replace(" ","_")
+speaker_names <- prep_stopwords(read_csv("data/input/representative_names_2014-2018.csv")$Név %>% tolower())
 
-parl_text <- read_csv("data/input/parlament_speech_2019-2020.csv")  %>% 
-  filter(type == "vezérszónoki felszólalás" | type == "felszólalás" | type == "elhangzik az interpelláció/kérdés/azonnali kérdés"
-         | type == "azonnali kérdésre adott képviselői viszonválasz" | type == "azonnali kérdésre adott képviselői viszonválasz"
-         | type == "kétperces felszólalás" | type == "kérdés megválaszolva" | type == "napirend előttihez hozzászólás" 
-         | type == "napirend előtti felszólalás" | type == "napirend előtti felszólalás" | type == "azonnali kérdésre adott miniszteri viszonválasz"
-         | type == "napirend utáni felszólalás" | type == "Előadói válasz"
-         | type == "előterjesztő nyitóbeszéde" | type == "interpelláció szóban megválaszolva") %>%
+parl_text <- read_csv("data/input/parlament_speech_2014-2018.csv")  %>% 
+  filter(type == "vezérszónoki felszólalás" 
+         | type == "felszólalás" 
+         | type == "elhangzik az interpelláció/kérdés/azonnali kérdés"
+         | type == "azonnali kérdésre adott képviselői viszonválasz" 
+         | type == "azonnali kérdésre adott képviselői viszonválasz"
+         | type == "kétperces felszólalás" 
+         | type == "kérdés megválaszolva" 
+         | type == "napirend előttihez hozzászólás" 
+         | type == "napirend előtti felszólalás" 
+         | type == "napirend előtti felszólalás"
+         | type == "azonnali kérdésre adott miniszteri viszonválasz"
+         | type == "napirend utáni felszólalás" 
+         | type == "Előadói válasz"
+         | type == "előterjesztő nyitóbeszéde" 
+         | type == "interpelláció szóban megválaszolva") %>%
   select(c("date", "oldal", "speaker_party", "speaker", "text_strip","type")) %>%
   dplyr::rename(text = text_strip) %>% 
   drop_na() %>% 
   mutate (name = str_replace_all(speaker,"Dr. ",""),
           month = substr(date,6,7),
-          label = ifelse(oldal == "ellenzék",0,1))
+          label = ifelse(oldal == "ellenzék",0,1),
+          date = as.Date(date, format = '%Y.%m.%d.'))
 
+parl_text %>% select("speaker_party") %>% table()
+
+# drop jobbik now
+parl_text <- parl_text %>% filter(speaker_party != "Jobbik")
 
 
 corpus <- corpus(parl_text %>% select(text))
@@ -40,6 +56,7 @@ docvars(corpus, "speaker_party") <- parl_text$speaker_party
 docvars(corpus, "speaker") <- parl_text$speaker
 docvars(corpus, "side") <- parl_text$oldal
 docvars(corpus, "label") <- parl_text$label
+docvars(corpus, "date") <- parl_text$date
 
 sphrases <- prep_stopwords(c("jobbik magyarországért mozgalom","magyar szocialista párt", "lehet más a poitika",
                              "jelent pillanatban","várom érdemi válaszát","egyszer mondom","múlt héten","parlament falai",
@@ -65,7 +82,6 @@ swords <- prep_stopwords(append(scan("data/input/stopwords-hu.txt", what="", sep
                                      "szeretném","kérni","tudom","mondani",  "dolog","fontos","fog","történni","javaslat","módosító","szeretnék","dolgot",
                                      "években","nap","széket","tudni","fogják","fogja","szó parancsoljon","választ adni","képviselők")))
 
-
 parl_tokens <- tokens(corpus, 
                       remove_punct = T,
                       remove_symbols = T,
@@ -73,57 +89,60 @@ parl_tokens <- tokens(corpus,
                       remove_separators = T) %>% 
                tokens_tolower() %>% 
                tokens_select(pattern = phrase(sphrases), selection = "remove") %>% 
-               tokens_select(pattern = phrase(names), selection = "remove") %>% 
+               tokens_select(pattern = phrase(speaker_names), selection = "remove") %>% 
                tokens_select(pattern = swords, selection = "remove")
 
 rm(parl_text)
+rm(corpus)
+
 
 #stemming
 parl_tokens <- parl_tokens %>% tokens_wordstem(language = 'hu')
 
+# Scaling --------------------------------------------------------------
 
 # bigramm 
 toks_2gram <- tokens_ngrams(parl_tokens, n = 2)
 
-bi_dtm <- dfm(toks_2gram, groups = "side") %>%
-  dfm_trim(groups = "side", min_termfreq = 20) 
+bi_dtm <- dfm(toks_2gram) %>%
+  dfm_group(groups = side) %>%
+  dfm_trim(groups = side, min_termfreq = 20) 
 
 bigram_keyness <- bi_dtm %>% textstat_keyness(target=1, measure="chi2")
 
-bigram_keyness %>% write_csv("data/output/bigramms.csv")
+bigram_keyness %>% write_csv("data/output/bigramms_1418_wojobbik.csv")
 
-# create wordcloud comparison
-
-textplot_wordcloud(dfm_group(bi_dtm, 'side'), comparison = TRUE,max_words = 100)
-
-dev.off()
-
+textplot_wordcloud(dfm_group(bi_dtm, groups = side), comparison = TRUE,max_words = 100)
 
 # trigramm 
 
 toks_3gram <- tokens_ngrams(parl_tokens, n = 3)
 
-dtm_3gram <- dfm(toks_3gram, groups = "side") %>% 
-  dfm_trim(groups = "side",min_termfreq = 10)
+dtm_3gram <- dfm(toks_3gram) %>%
+  dfm_group(groups = side) %>%
+  dfm_trim(groups = side, min_termfreq = 20) 
 
 trigram_keyness <- dtm_3gram %>% textstat_keyness(target=1,measure="chi2") 
 
-trigram_keyness %>% write_csv("data/output/trigramms.csv")
+trigram_keyness %>% write_csv("data/output/trigramms_1418_wojobbik.csv")
 
 wordplot <- textplot_keyness(trigram_keyness,n=30,min_count = 5,margin=0.15)
 
+textplot_keyness(trigram_keyness)
+
 # create wordcloud comparison
-dfm_group(dtm_3gram, 'side') %>% 
+dfm_group(dtm_3gram, groups = side) %>% 
   textplot_wordcloud(comparison = TRUE,max_words = 100)
 
 
 # Create final n=2000 phrase list
 
-bigrams <- read_csv("data/output/bigramms.csv") %>% mutate(feature = str_replace_all(feature,"_"," "))
-trigrams <- read_csv("data/output/trigramms.csv") %>% mutate(feature = str_replace_all(feature,"_"," "))
+bigrams <- read_csv("data/output/bigramms_1418_wojobbik.csv") %>%
+  mutate(feature = str_replace_all(feature,"_"," "))
+trigrams <- read_csv("data/output/trigramms_1418_wojobbik.csv") %>%
+  mutate(feature = str_replace_all(feature,"_"," "))
 
 bigrams <-  rbind(bigrams %>% head(500),bigrams %>% tail(500))
-
 trigrams <-  rbind(trigrams %>% head(500),trigrams %>% tail(500))
 
 p <- data.frame(cbind(c(bigrams$feature,trigrams$feature)))
@@ -131,28 +150,24 @@ p <- data.frame(cbind(c(bigrams$feature,trigrams$feature)))
 colnames(p)[1] <- "p"
 p$p <- str_replace_all(p$p," ","_") 
 
-p %>% write_csv("data/output/p_1920.csv")
+selected_ps <-  prep_stopwords(p %>% select(p))
+
+selected_ps %>% write_rds("data/output/selected_parl_phrases_1418_wojobbik.rds")
 
 # Create phrase frequencies of selected phrases in parltext
 
-selected_ps = prep_stopwords(p %>% select(p))
+selected_ps <- read_rds("data/output/selected_parl_phrases_1418_wojobbik.rds")
 
 selected_parl_tokens <- parl_tokens %>% tokens_ngrams(n=2:3) %>%
   tokens_select(pattern = phrase(selected_ps), selection = "keep")
 
-phrase_frequency_table_parliament <- dfm(selected_parl_tokens, groups = "label")
 
+phrase_frequency_table_parliament <- dfm(selected_parl_tokens)
 
 # train wordscore model
 tmod_ws <- textmodel_wordscores(phrase_frequency_table_parliament, 
-                                y = phrase_frequency_table_parliament$label, smooth = 1)
+                                y = phrase_frequency_table_parliament$label,
+                                smooth = 0)
 summary(tmod_ws)
 
-tmod_ws %>% write_rds("data/output/wordscore_fit_1920.rds")
-
-tmod_ws_old <- read_rds("data/output/wordscore_fit_1920_old.rds")
-
-summary(tmod_ws_old)
-
-
-rm(list=ls())
+tmod_ws %>% write_rds("data/output/wordscore_fit_1418_wojobbik.rds")
