@@ -12,7 +12,6 @@ library(ggplot2)
 library(quanteda)
 quanteda_options(threads = 8)
 library(tidyverse)
-library(gofastr)
 
 ## create belfold text in 2020
 df_media <- read_csv("data/input/newspaper_text_2020.csv")
@@ -25,7 +24,6 @@ df_media %>%
   group_by(date) %>% mutate(c = n()) %>% ungroup() %>% 
   ggplot(aes(x=as.Date(date),y=c)) + geom_line() + ylim(0,1000) +
   theme_bw()
-
 
 
 df_media <- df_media %>% 
@@ -61,4 +59,4 @@ corpus <- corpus(df_media %>% select(text))
 docvars(corpus, "page") <- df_media %>% select("page")
 docvars(corpus, "site_month") <- df_media %>% select("site_month")
 
-corpus %>% write_rds("data/media_2019_2021_corpus.rds")
+corpus %>% write_rds("data/output/media_2019_2021_corpus.rds")

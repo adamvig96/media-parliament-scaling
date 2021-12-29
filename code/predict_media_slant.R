@@ -14,13 +14,12 @@ library(quanteda)
 quanteda_options(threads = 8)
 require(quanteda.textmodels)
 library(tidyverse)
-library(gofastr)
 
 ## proposed model: 
 
-tmod_ws <-  read_rds("data/output/wordscore_fit_1418_wojobbik.rds")
-selected_phrases <- read_rds("data/output/selected_parl_phrases_1418_wojobbik.rds")
-corpus <- read_rds("data/media_2019_2021_corpus.rds")
+tmod_ws <-  read_rds("data/output/wordscore_fit.rds")
+selected_phrases <- read_rds("data/output/selected_parl_phrases.rds")
+corpus <- read_rds("data/output/media_2019_2021_corpus.rds")
 
 media_tokens <- tokens(corpus, 
                        remove_punct = T,
@@ -44,4 +43,4 @@ predicted_slant <- as.data.frame(pred_ws)
 predicted_slant <- cbind(site_month = rownames(predicted_slant), predicted_slant)
 rownames(predicted_slant) <- 1:nrow(predicted_slant)
 
-predicted_slant %>% write_csv("data/output/monthly_pred_1418_wojobbik.csv")
+predicted_slant %>% write_csv("data/output/monthly_slant_pred.csv")
