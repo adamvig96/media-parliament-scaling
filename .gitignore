@@ -1,7 +1,11 @@
 data/
 figures/
+logs/
 
 # R
 renv/
 .Rhistory
 .Rprofile
+.Rproj.user
+.RData
+Rplots.pdf
