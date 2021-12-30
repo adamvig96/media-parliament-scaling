@@ -3,10 +3,11 @@ rm(list=ls())
 
 library(dplyr)
 library(quanteda)
+library(quanteda.textmodels)
 library(tidyverse)
 
 parl_tokens <- read_rds("data/output/parliament_tokens.rds")
-selected_ps <- read_rds("data/output/selected_parl_phrases.rds")
+selected_ps <- read_rds("data/output/selected_phrases.rds")
 
 # Create phrase frequencies of selected phrases in parliament text
 

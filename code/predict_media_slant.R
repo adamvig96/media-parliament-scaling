@@ -18,7 +18,7 @@ library(tidyverse)
 ## proposed model: 
 
 tmod_ws <-  read_rds("data/output/wordscore_fit.rds")
-selected_phrases <- read_rds("data/output/selected_parl_phrases.rds")
+selected_phrases <- read_rds("data/output/selected_phrases.rds")
 corpus <- read_rds("data/output/media_2019_2021_corpus.rds")
 
 media_tokens <- tokens(corpus, 

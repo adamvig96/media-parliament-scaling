@@ -55,4 +55,4 @@ colnames(p)[1] <- "p"
 p$p <- str_replace_all(p$p," ","_") 
 selected_ps <-prep_stopwords(p %>% select(p))
 
-selected_ps %>% write_rds("data/output/selected_parl_phrases.rds")
+selected_ps %>% write_rds("data/output/selected_phrases.rds")
