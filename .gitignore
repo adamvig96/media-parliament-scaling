@@ -2,6 +2,8 @@ data/
 figures/
 logs/
 
+.vscode
+
 # R
 renv/
 .Rhistory
