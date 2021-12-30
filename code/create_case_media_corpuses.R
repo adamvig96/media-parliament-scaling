@@ -3,10 +3,12 @@ rm(list=ls())
 
 library(dplyr)
 library(tidyverse)
+library(quanteda)
 
 # Read raw
 media_corpus <- read_csv("data/raw/media_corpus_raw.csv") %>% 
-  mutate(site_month = substr(date, 1, 7 ))
+  mutate(ym = substr(date, 1, 7 )) %>% 
+  mutate(site_month = paste(page, ym, sep="_"))
 
 # Create case study corpuses
 index_corpus <- media_corpus %>% filter(date >= "2019-01-01")
@@ -28,3 +30,4 @@ corpus <- corpus(mno_corpus$content)
 docvars(corpus, "page") <- mno_corpus$page
 docvars(corpus, "site_month") <- mno_corpus$site_month
 write_rds(corpus, "data/output/mno_case_corpus.rds")
+
