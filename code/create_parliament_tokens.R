@@ -43,12 +43,12 @@ docvars(corpus, "date") <- parl_text$date
 rm(parl_text)
 
 swords <- append(
-  scan("data/input/stopwords-hu.txt", what="", sep="\n"),
-  scan("data/input/stopwords-parliament.txt", what="", sep="\t")
+  scan("data/stopwords/stopwords-hu.txt", what="", sep="\n"),
+  scan("data/stopwords/stopwords-parliament.txt", what="", sep="\t")
   ) %>% 
   prep_stopwords()
 
-sphrases <- scan("data/input/stopphrases-parliament.txt", what="", sep="\t") %>% 
+sphrases <- scan("data/stopwords/stopphrases-parliament.txt", what="", sep="\t") %>% 
   prep_stopwords()
 
 speaker_names <- read_csv("data/input/representative_names_2014-2018.csv")$Név %>%
