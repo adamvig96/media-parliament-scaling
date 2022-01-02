@@ -6,7 +6,7 @@ library(quanteda)
 library(tidyverse)
 library(gofastr)
 
-parl_text <- read_csv("data/input/parlament_speech_2014-2018.csv")  %>% 
+parl_text <- read_csv("data/input/parlament_speech_2010-2014.csv")  %>% 
   filter(type == "vezérszónoki felszólalás" 
          | type == "felszólalás" 
          | type == "elhangzik az interpelláció/kérdés/azonnali kérdés"
@@ -22,12 +22,12 @@ parl_text <- read_csv("data/input/parlament_speech_2014-2018.csv")  %>%
          | type == "Előadói válasz"
          | type == "előterjesztő nyitóbeszéde" 
          | type == "interpelláció szóban megválaszolva") %>%
-  select(c("date", "oldal", "speaker_party", "speaker", "text_strip","type")) %>%
   dplyr::rename(text = text_strip) %>% 
   drop_na() %>% 
   mutate (name = str_replace_all(speaker,"Dr. ",""),
+          oldal = ifelse(speaker_party == "Fidesz" | speaker_party == "KDNP", "Fidesz-KDNP", "Ellenzék"),
+          label = ifelse(oldal == "Fidesz-KDNP", 1, 0),
           month = substr(date,6,7),
-          label = ifelse(oldal == "ellenzék",0,1),
           date = as.Date(date, format = '%Y.%m.%d.'))
 
 # drop jobbik here
