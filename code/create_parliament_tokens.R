@@ -6,7 +6,11 @@ library(quanteda)
 library(tidyverse)
 library(gofastr)
 
-parl_text <- read_csv("data/input/parlament_speech_2010-2014.csv")  %>% 
+parl_text <- rbind(read_csv("data/input/parlament_speech_2010-2014.csv"),
+                   read_csv("data/input/parlament_speech_2014-2018.csv"),
+                   read_csv("data/input/parlament_speech_2018-2020.csv"))
+
+parl_text <- parl_text %>% 
   filter(type == "vezérszónoki felszólalás" 
          | type == "felszólalás" 
          | type == "elhangzik az interpelláció/kérdés/azonnali kérdés"
@@ -32,6 +36,8 @@ parl_text <- read_csv("data/input/parlament_speech_2010-2014.csv")  %>%
 
 # drop jobbik here
 parl_text <- parl_text %>% filter(speaker_party != "Jobbik")
+
+parl_text %>% select(-text) %>% write_csv("data/output/parl_text_metadata.csv")
 
 corpus <- corpus(parl_text %>% select(text))
 docvars(corpus, "speaker_party") <- parl_text$speaker_party
