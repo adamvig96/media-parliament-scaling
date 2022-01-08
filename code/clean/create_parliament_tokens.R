@@ -35,13 +35,13 @@ parl_text <- read_csv("data/raw/parliament_speeches_2010-2020.csv") %>%
 # drop jobbik here
 parl_text <- parl_text %>% filter(speaker_party != "Jobbik")
 
-parl_text %>% select(-text) %>% write_csv("data/output/parl_text_metadata.csv")
+parl_text %>% select(-text) %>% write_csv("data/intermed/parl_text_metadata.csv")
 
 corpus <- corpus(parl_text %>% select(text))
 docvars(corpus, "speaker_party") <- parl_text$speaker_party
 docvars(corpus, "speaker") <- parl_text$speaker
-docvars(corpus, "side") <- parl_text$oldal
-docvars(corpus, "label") <- parl_text$label
+docvars(corpus, "side") <- parl_text$govt_opp
+docvars(corpus, "label") <- parl_text$govt
 docvars(corpus, "date") <- parl_text$date
 
 rm(parl_text)
@@ -55,7 +55,8 @@ swords <- append(
 sphrases <- scan("data/stopwords/stopphrases-parliament.txt", what="", sep="\t") %>% 
   prep_stopwords()
 
-speaker_names <- read_csv("data/input/representative_names_2014-2018.csv")$Név %>%
+speaker_names <- rbind(read_csv("data/input/representative_names_2014-2018.csv"),
+                        read_csv("data/input/representative_names_2018-2020.csv"))$Név %>%
   tolower() %>% 
   prep_stopwords()
 
@@ -70,4 +71,4 @@ parl_tokens <- tokens(corpus,
                tokens_select(pattern = swords, selection = "remove") %>% 
                tokens_wordstem(language = 'hu')
 
-parl_tokens %>% write_rds("data/output/parliament_tokens.rds")
+parl_tokens %>% write_rds("data/intermed/parliament_tokens.rds")

@@ -72,7 +72,7 @@ def melt_data_for_figure(df, z_score=1.96):
 def execute_formating():
     df = pd.concat(
         [
-            pd.read_csv("data/output/monthly_slant_pred_" + str(year) + ".csv")
+            pd.read_csv("data/slant_estimates/monthly_slant_pred_" + str(year) + ".csv")
             for year in range(2010, 2022)
         ]
     ).loc[lambda x: x["se.fit"] != 0]

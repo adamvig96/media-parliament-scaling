@@ -19,6 +19,6 @@ for (year_index in 2010:2021){
   docvars(corpus, "page") <- year_sample$page
   docvars(corpus, "site_month") <- year_sample$site_month
   write_rds(corpus,
-            paste("data/output/media_corpus_", as.character(year_index), ".rds",
+            paste("data/media_corpus/media_corpus_", as.character(year_index), ".rds",
                   sep = ""))
 }

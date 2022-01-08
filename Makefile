@@ -17,8 +17,8 @@ data/intermed/wordscore_fit.rds: code/estimate/train_wordscore_model.R data/inte
 data/intermed/selected_phrases.rds: code/clean/create_selected_phrases.R data/intermed/parliament_tokens.rds
 	$(R) $< logs/create_selected_phrases.Rout
 
-data/intermed/parliament_tokens.rds: code/clean/create_parliament_tokens.R data/raw/parlament_speeches_2010-2020.csv $(STOPWORDS)
+data/intermed/parliament_tokens.rds: code/clean/create_parliament_tokens.R data/raw/parliament_speeches_2010-2020.csv $(STOPWORDS)
 	$(R) $< logs/create_parliament_tokens.Rout
 
-data/raw/parlament_speeches_2010-2020.csv: code/import/download_parliament_speeches.py
+data/raw/parliament_speeches_2010-2020.csv: code/import/download_parliament_speeches.py
 	python3 -b $<

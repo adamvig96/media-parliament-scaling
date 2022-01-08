@@ -17,12 +17,12 @@ library(tidyverse)
 
 ## proposed model: 
 
-tmod_ws <-  read_rds("data/output/wordscore_fit.rds")
-selected_phrases <- read_rds("data/output/selected_phrases.rds")
+tmod_ws <-  read_rds("data/intermed/wordscore_fit.rds")
+selected_phrases <- read_rds("data/intermed/selected_phrases.rds")
 
 for (year_index in 2010:2021){
   corpus <- read_rds(
-    paste("data/output/media_corpus_", as.character(year_index), ".rds",
+    paste("data/media_corpus/media_corpus_", as.character(year_index), ".rds",
                            sep = "")
     )
   
@@ -50,6 +50,6 @@ for (year_index in 2010:2021){
   rownames(predicted_slant) <- 1:nrow(predicted_slant)
   
   predicted_slant %>% write_csv(
-    paste("data/output/monthly_slant_pred_", as.character(year_index), ".csv", sep = "")
+    paste("data/slant_estimates/monthly_slant_pred_", as.character(year_index), ".csv", sep = "")
     )
 }

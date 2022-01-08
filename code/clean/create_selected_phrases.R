@@ -10,7 +10,7 @@ library(quanteda.textplots)
 library(tidyverse)
 library(gofastr)
 
-parl_tokens <- read_rds("data/output/parliament_tokens.rds")
+parl_tokens <- read_rds("data/intermed/parliament_tokens.rds")
 
 # bigramm 
 toks_2gram <- tokens_ngrams(parl_tokens, n = 2)
@@ -55,4 +55,4 @@ colnames(p)[1] <- "p"
 p$p <- str_replace_all(p$p," ","_") 
 selected_ps <-prep_stopwords(p %>% select(p))
 
-selected_ps %>% write_rds("data/output/selected_phrases.rds")
+selected_ps %>% write_rds("data/intermed/selected_phrases.rds")
