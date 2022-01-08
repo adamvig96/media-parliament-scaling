@@ -6,9 +6,7 @@ library(quanteda)
 library(tidyverse)
 library(gofastr)
 
-parl_text <- read_csv("data/raw/parliament_speeches_2010-2020.csv")
-
-parl_text <- parl_text %>% 
+parl_text <- read_csv("data/raw/parliament_speeches_2010-2020.csv") %>% 
   filter(type == "vezérszónoki felszólalás" 
          | type == "felszólalás" 
          | type == "elhangzik az interpelláció/kérdés/azonnali kérdés"
@@ -25,19 +23,19 @@ parl_text <- parl_text %>%
          | type == "előterjesztő nyitóbeszéde" 
          | type == "interpelláció szóban megválaszolva") %>%
   dplyr::rename(text = text_strip) %>% 
-  drop_na() %>% 
   mutate (name = str_replace_all(speaker,"Dr. ",""),
-          oldal = ifelse(speaker_party == "Fidesz" | speaker_party == "KDNP", "Fidesz-KDNP", "Ellenzék"),
-          label = ifelse(oldal == "Fidesz-KDNP", 1, 0),
+          govt_opp = ifelse(speaker_party %in% c("Fidesz","KDNP"), "government",
+                  ifelse(speaker_party %in% c("MSZP", "LMP", "DK","Jobbik", "Párbeszéd"), "opposition",
+                         NA)),
+          govt = ifelse(govt_opp == "government", 1, 0),
           month = substr(date,6,7),
-          date = as.Date(date, format = '%Y.%m.%d.'))
+          date = as.Date(date, format = '%Y.%m.%d.')) %>% 
+  drop_na(govt_opp, text)
 
 # drop jobbik here
 parl_text <- parl_text %>% filter(speaker_party != "Jobbik")
 
 parl_text %>% select(-text) %>% write_csv("data/output/parl_text_metadata.csv")
-
-ptprev <- read_csv("data/intermed/parl_text_metadata.csv")
 
 corpus <- corpus(parl_text %>% select(text))
 docvars(corpus, "speaker_party") <- parl_text$speaker_party
