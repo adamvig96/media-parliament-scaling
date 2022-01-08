@@ -1,8 +1,23 @@
 R = R CMD BATCH
 STOPWORDS = data/stopwords/stopwords-hu.txt data/stopwords/stopwords-parliament.txt data/stopwords/stopphrases-parliament.txt
 YEARS = $(shell seq 2010 2021)
+FIGURES = government_opposition origo_case magyar_nemzet_case
 
-figures/slant_estimates_origo_case.png figures/slant_estimate_magyar_nemzet_case.png&: code/plots/plot_case_studies.py $(foreach year, $(YEARS), data/slant_estimates/monthly_slant_pred_$(year).csv)
+.PHONY: all
+all: $(foreach figure, $(FIGURES), figures/slant_estimates_$(figure).png)
+
+# PARLIAMENT SPEECHES ESTIMATES
+
+figures/slant_estimates_government_opposition.png: code/plots/plot_party_slant.py data/slant_estimates/party_slant_pred.csv
+	python3 -b $<
+
+data/slant_estimates/party_slant_pred.csv: code/estimate/predict_party_slant.R data/intermed/parliament_tokens.rds data/intermed/selected_phrases.rds data/intermed/wordscore_fit.rds
+	$(R) $< logs/predict_party_slant.Rout
+
+
+# MEDIA SLANT ESTIMATES
+
+figures/slant_estimates_origo_case.png figures/slant_estimates_magyar_nemzet_case.png &: code/plots/plot_case_studies.py $(foreach year, $(YEARS), data/slant_estimates/monthly_slant_pred_$(year).csv)
 	python3 -b $<
 
 $(foreach year, $(YEARS), data/slant_estimates/monthly_slant_pred_$(year).csv)&: code/estimate/predict_media_slant.R data/intermed/wordscore_fit.rds data/intermed/selected_phrases.rds $(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds) 
@@ -10,6 +25,9 @@ $(foreach year, $(YEARS), data/slant_estimates/monthly_slant_pred_$(year).csv)&:
 
 $(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds)&: code/clean/create_year_media_corpuses.R data/raw/media_corpus_raw.csv
 	$(R) $< logs/create_year_media_corpuses.Rout
+
+
+# TRAIN MODEL
 
 data/intermed/wordscore_fit.rds: code/estimate/train_wordscore_model.R data/intermed/parliament_tokens.rds data/intermed/selected_phrases.rds
 	$(R) $< logs/train_wordscore_model.Rout
@@ -19,6 +37,8 @@ data/intermed/selected_phrases.rds: code/clean/create_selected_phrases.R data/in
 
 data/intermed/parliament_tokens.rds: code/clean/create_parliament_tokens.R data/raw/parliament_speeches_2010-2020.csv $(STOPWORDS)
 	$(R) $< logs/create_parliament_tokens.Rout
+
+# IMPORT RAW DATA
 
 data/raw/parliament_speeches_2010-2020.csv: code/import/download_parliament_speeches.py
 	python3 -b $<

@@ -9,17 +9,20 @@ library(tidyverse)
 
 parl_tokens <- read_rds("data/intermed/parliament_tokens.rds")
 selected_ps <- read_rds("data/intermed/selected_phrases.rds")
+tmod_ws <- read_rds("data/intermed/wordscore_fit.rds")
 
 # Create phrase frequencies of selected phrases in parliament text
 
 phrase_frequency_table_parliament <- parl_tokens %>%
   tokens_ngrams(n=2:3) %>%
   tokens_select(pattern = phrase(selected_ps), selection = "keep") %>% 
-  dfm()
+  dfm() %>% 
+  dfm_group(groups = side_quarter)
 
-# train wordscore model
-tmod_ws <- textmodel_wordscores(phrase_frequency_table_parliament, 
-                                y = phrase_frequency_table_parliament$label,
-                                smooth = 0)
+pred_ws <- predict(tmod_ws, se.fit = TRUE, newdata = phrase_frequency_table_parliament)
 
-tmod_ws %>% write_rds("data/intermed/wordscore_fit.rds")
+predicted_slant <- as.data.frame(pred_ws)
+predicted_slant <- cbind(party_quarter = rownames(predicted_slant), predicted_slant)
+rownames(predicted_slant) <- 1:nrow(predicted_slant)
+
+predicted_slant %>% write_csv("data/slant_estimates/party_slant_pred.csv")

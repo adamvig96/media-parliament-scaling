@@ -28,8 +28,12 @@ parl_text <- read_csv("data/raw/parliament_speeches_2010-2020.csv") %>%
                   ifelse(speaker_party %in% c("MSZP", "LMP", "DK","Jobbik", "Párbeszéd"), "opposition",
                          NA)),
           govt = ifelse(govt_opp == "government", 1, 0),
-          month = substr(date,6,7),
-          date = as.Date(date, format = '%Y.%m.%d.')) %>% 
+          ym = substr(date, 1, 7),
+          year = substr(date, 1, 4),
+          ym = as.Date(paste(ym, ".01", sep = ""), format = "%Y.%m.%d"),
+          quarter = lubridate::quarter(ym, with_year = F),
+          date = zoo::as.yearqtr(paste(year, quarter, sep = "-")), 
+          govt_opp_quarter = paste(govt_opp, date, sep="_")) %>% 
   drop_na(govt_opp, text)
 
 # drop jobbik here
@@ -41,6 +45,7 @@ corpus <- corpus(parl_text %>% select(text))
 docvars(corpus, "speaker_party") <- parl_text$speaker_party
 docvars(corpus, "speaker") <- parl_text$speaker
 docvars(corpus, "side") <- parl_text$govt_opp
+docvars(corpus, "side_quarter") <- parl_text$govt_opp_quarter
 docvars(corpus, "label") <- parl_text$govt
 docvars(corpus, "date") <- parl_text$date
 
