@@ -11,6 +11,8 @@ import pandas as pd
 from requests import get
 from tqdm import tqdm
 
+tqdm.pandas()
+
 
 def get_gzipped_json(url):
     return loads(decompress(get(url).content))
