@@ -1,7 +1,7 @@
 R = R CMD BATCH
 STOPWORDS = data/stopwords/stopwords-hu.txt data/stopwords/stopwords-parliament.txt data/stopwords/stopphrases-parliament.txt
 YEARS = $(shell seq 2010 2021)
-FIGURES = government_opposition origo_case magyar_nemzet_case
+FIGURES = government_opposition origo_case origo_case_24hu_control magyar_nemzet_case magyar_nemzet_case_24hu_control
 
 .PHONY: all
 all: $(foreach figure, $(FIGURES), figures/slant_estimates_$(figure).png)
