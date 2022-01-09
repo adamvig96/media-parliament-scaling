@@ -1,11 +1,14 @@
 import pandas as pd
 import numpy as np
+from pandas.core import frame
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import warnings
 import datetime as dt
 
 warnings.filterwarnings("ignore")
+
 
 def format_data(df):
     return (
@@ -94,35 +97,55 @@ figname = "slant_estimates_origo_case.png"
 
 
 plt.figure(figsize=(10, 7))
-sns.set_theme(style="darkgrid")
+sns.set_theme(style="whitegrid")
+colors = ["#e01164", "#f4941c", "#011593"]
+sns.set_palette(sns.color_palette(colors))
+
 sns.lineplot(x="date", y="slant", hue="site", style="variable", data=df)
-plt.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
-plt.title("Predicted slant of media outlets\norigo.hu case", size=20)
-plt.ylabel("slant")
+
+nyolcas = mpatches.Patch(color=colors[0], label="888.hu")
+index = mpatches.Patch(color=colors[1], label="index.hu")
+origo = mpatches.Patch(color=colors[2], label="origo.hu")
+
+plt.legend(
+    handles=[nyolcas, index, origo],
+    loc=0,
+    borderaxespad=1.0,
+    frameon=False,
+    title=False,
+    numpoints=3,
+    labels=["888.hu", "index.hu", "origo.hu"],
+)
+plt.title("Online hírportálok torzítottsága:\n az origo.hu esete", size=20, y=1.03)
+plt.ylabel("Becsült torzítottság")
+plt.xlabel(None)
+plt.ylim(0.4, 0.65)
 
 # change of editor
-plt.axvline(dt.datetime(2014, 6, 2))
+plt.axvline(dt.datetime(2014, 6, 2), color="#000000")
 plt.annotate(
-    "change of editor, origo.hu",
+    "origo.hu\nszerkesztőváltás",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.36, 0.4),
+    xytext=(0.3, 0.15),
     textcoords="axes fraction",
-    rotation=90,
-)
-plt.annotate(
-    "change of owner, origo.hu",
-    xy=(3, 1),
-    xycoords="axes fraction",
-    xytext=(0.48, 0.4),
-    textcoords="axes fraction",
-    rotation=90,
+    ha="center",
+    va="center",
 )
 
 # change of owner
-plt.axvline(dt.datetime(2015, 12, 7))
+plt.axvline(dt.datetime(2015, 12, 7), color="#000000")
+plt.annotate(
+    "origo.hu\ntulajdonosváltás",
+    xy=(3, 1),
+    xycoords="axes fraction",
+    xytext=(0.61, 0.15),
+    textcoords="axes fraction",
+    ha="center",
+    va="center",
+)
 
-plt.savefig("figures/" + figname)
+plt.savefig("figures/" + figname, dpi=1000)
 
 
 df = execute_formating().loc[
@@ -132,37 +155,53 @@ figname = "slant_estimates_magyar_nemzet_case.png"
 
 
 plt.figure(figsize=(10, 7))
-sns.set_theme(style="darkgrid")
+sns.set_theme(style="whitegrid")
+colors = ["#e01164", "#f4941c", "#133c5c", "#133c5c"]
+sns.set_palette(sns.color_palette(colors))
+
 sns.lineplot(x="date", y="slant", hue="site", style="variable", data=df)
-plt.legend(bbox_to_anchor=(1, 1), loc=2, borderaxespad=0.0)
-plt.title("Predicted slant of media outlets\nMagyar Nemzet case", size=20)
-plt.ylabel("slant")
+
+
+nyolcas = mpatches.Patch(color=colors[0], label="888.hu")
+index = mpatches.Patch(color=colors[1], label="index.hu")
+mno = mpatches.Patch(color=colors[2], label="mno.hu")
+
+plt.legend(
+    handles=[nyolcas, index, mno],
+    loc=0,
+    borderaxespad=1.0,
+    frameon=False,
+    title=False,
+    numpoints=3,
+    labels=["888.hu", "index.hu", "mno.hu"],
+)
+plt.title("Online hírportálok torzítottsága:\n a Magyar Nemzet esete", size=20)
+plt.ylabel("Becsült torzítottság")
+plt.xlabel(None)
+plt.ylim(0.4, 0.65)
 
 # G nap
-plt.axvline(dt.datetime(2015, 2, 6))
+plt.axvline(dt.datetime(2015, 2, 6), color="#000000")
 plt.annotate(
-    "Simicska-Orbán fallout",
+    "G-nap",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.42, 0.36),
-    textcoords="axes fraction",
-    rotation=90,
-)
-plt.annotate(
-    "Simicska\ncloses mno.hu",
-    xy=(3, 1),
-    xycoords="axes fraction",
-    xytext=(0.7, 0.25),
-    textcoords="axes fraction"
-)
-plt.annotate(
-    "magyaridok.hu\nchanges name to mno.hu",
-    xy=(3, 1),
-    xycoords="axes fraction",
-    xytext=(0.6, 0.64),
+    xytext=(0.38, 0.83),
     textcoords="axes fraction",
 )
+plt.annotate(
+    "Simicska\n bezár",
+    xy=(3, 1),
+    xycoords="axes fraction",
+    xytext=(0.65, 0.15),
+    textcoords="axes fraction",
+)
+plt.annotate(
+    "Magyar Idők nevet vált\nMagyar Nemzetre",
+    xy=(3, 1),
+    xycoords="axes fraction",
+    xytext=(0.6, 0.59),
+    textcoords="axes fraction",
+)
 
-plt.savefig("figures/" + figname)
-
-
+plt.savefig("figures/" + figname, dpi=1000)

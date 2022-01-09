@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 z_score = 1.96
 alpha = 1
@@ -33,18 +34,29 @@ df = (
 )
 
 plt.figure(figsize=(10, 7))
-sns.set_theme(style="darkgrid")
+sns.set_theme(style="whitegrid")
+colors = ["#fd8100", "#001166"]
+sns.set_palette(sns.color_palette(colors))
 sns.lineplot(x="date", y="value", hue="side", style="variable", data=df)
-plt.ylabel("Estimated slant")
-plt.title("Estimated slant of government and opposition speeches", size=20)
+plt.ylabel("Becsült torzítottság")
+plt.ylim(0.25, 0.75)
+plt.title(
+    "Kormánypárti és ellenzéki képviselők\nfelszólalásainak becsült torzítottsága",
+    size=20,
+    y=1.03,
+)
 plt.xlabel(None)
-plt.legend(bbox_to_anchor=(1, 1), loc=0, borderaxespad=1.0)
 
-plt.savefig("figures/" + figname)
+govt = mpatches.Patch(color=colors[0], label="Fidesz-KDNP")
+opp = mpatches.Patch(color=colors[1], label="Ellenzék")
 
+plt.legend(
+    handles=[govt, opp],
+    loc=3,
+    borderaxespad=2.0,
+    title=None,
+    frameon=False,
+    numpoints=2,
+)
 
-# In[ ]:
-
-
-
-
+plt.savefig("figures/" + figname, dpi=1000)
