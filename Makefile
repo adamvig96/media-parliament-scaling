@@ -17,10 +17,10 @@ data/slant_estimates/party_slant_pred.csv: code/estimate/predict_party_slant.R d
 
 # MEDIA SLANT ESTIMATES
 
-figures/slant_estimates_origo_case.png figures/slant_estimates_magyar_nemzet_case.png &: code/plots/plot_case_studies.py $(foreach year, $(YEARS), data/slant_estimates/monthly_slant_pred_$(year).csv)
+figures/slant_estimates_origo_case.png figures/slant_estimates_magyar_nemzet_case.png &: code/plots/plot_case_studies.py $(foreach year, $(YEARS), data/slant_estimates/Q_slant_pred_$(year).csv)
 	python3 -b $<
 
-$(foreach year, $(YEARS), data/slant_estimates/monthly_slant_pred_$(year).csv)&: code/estimate/predict_media_slant.R data/intermed/wordscore_fit.rds data/intermed/selected_phrases.rds $(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds) 
+$(foreach year, $(YEARS), data/slant_estimates/Q_slant_pred_$(year).csv)&: code/estimate/predict_media_slant.R data/intermed/wordscore_fit.rds data/intermed/selected_phrases.rds $(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds) 
 	$(R) $< logs/predict_media_slant.Rout
 
 $(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds)&: code/clean/create_year_media_corpuses.R data/raw/media_corpus_raw.csv

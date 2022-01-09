@@ -39,17 +39,17 @@ for (year_index in 2010:2021){
   rm(corpus)
   
   phrase_frequency_table_media <- dfm(media_tokens) %>%
-    dfm_group(groups = site_month)
+    dfm_group(groups = site_quarter)
   
   # predict slant
   
   pred_ws <- predict(tmod_ws, se.fit = TRUE, newdata = phrase_frequency_table_media)
   
   predicted_slant <- as.data.frame(pred_ws) 
-  predicted_slant <- cbind(site_month = rownames(predicted_slant), predicted_slant)
+  predicted_slant <- cbind(site_quarter = rownames(predicted_slant), predicted_slant)
   rownames(predicted_slant) <- 1:nrow(predicted_slant)
   
   predicted_slant %>% write_csv(
-    paste("data/slant_estimates/monthly_slant_pred_", as.character(year_index), ".csv", sep = "")
+    paste("data/slant_estimates/Q_slant_pred_", as.character(year_index), ".csv", sep = "")
     )
 }
