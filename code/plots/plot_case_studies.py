@@ -175,7 +175,7 @@ plt.legend(
     numpoints=3,
     labels=["888.hu", "index.hu", "mno.hu"],
 )
-plt.title("Online hírportálok torzítottsága:\n a Magyar Nemzet esete", size=20)
+plt.title("Online hírportálok torzítottsága:\n a Magyar Nemzet esete", size=20, y=1.03)
 plt.ylabel("Becsült torzítottság")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)
