@@ -106,7 +106,7 @@ plt.annotate(
     "change of editor, origo.hu",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.36, 0.5),
+    xytext=(0.36, 0.4),
     textcoords="axes fraction",
     rotation=90,
 )
@@ -114,7 +114,7 @@ plt.annotate(
     "change of owner, origo.hu",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.48, 0.5),
+    xytext=(0.48, 0.4),
     textcoords="axes fraction",
     rotation=90,
 )
@@ -152,14 +152,14 @@ plt.annotate(
     "Simicska\ncloses mno.hu",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.66, 0.3),
+    xytext=(0.7, 0.25),
     textcoords="axes fraction"
 )
 plt.annotate(
     "magyaridok.hu\nchanges name to mno.hu",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.6, 0.56),
+    xytext=(0.6, 0.64),
     textcoords="axes fraction",
 )
 
