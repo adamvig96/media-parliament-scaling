@@ -3,6 +3,7 @@ logs/
 
 .vscode
 *.ipynb
+*.pyc
 
 # R
 renv/
