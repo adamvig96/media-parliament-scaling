@@ -1,12 +1,5 @@
-################################################################################
-
-# Predict slant for media outlets with previously trained wordscore model
-
-################################################################################
-
-
-rm(list = ls())
 renv::activate()
+rm(list = ls())
 
 library(dplyr)
 library(ggplot2)

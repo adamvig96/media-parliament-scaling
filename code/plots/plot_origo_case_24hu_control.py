@@ -23,11 +23,11 @@ sns.set_palette(sns.color_palette(colors))
 sns.lineplot(x="date", y="slant", hue="site", style="variable", data=df)
 
 nyolcas = mpatches.Patch(color=colors[0], label="24.hu")
-index = mpatches.Patch(color=colors[1], label="888.hu")
+huszonnegy = mpatches.Patch(color=colors[1], label="888.hu")
 origo = mpatches.Patch(color=colors[2], label="origo.hu")
 
 plt.legend(
-    handles=[nyolcas, index, origo],
+    handles=[huszonnegy, nyolcas, origo],
     loc=0,
     borderaxespad=1.0,
     frameon=False,
