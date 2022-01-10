@@ -40,6 +40,7 @@ plt.title("Online hírportálok torzítottsága:\n a Magyar Nemzet esete", size=
 plt.ylabel("Becsült torzítottság")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)
+plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2022, 1, 1))
 
 # G nap
 plt.axvline(dt.datetime(2015, 2, 6), color="#000000")
@@ -47,7 +48,7 @@ plt.annotate(
     "G-nap",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.38, 0.83),
+    xytext=(0.35, 0.75),
     textcoords="axes fraction",
 )
 plt.annotate(
@@ -61,7 +62,7 @@ plt.annotate(
     "Magyar Idők nevet vált\nMagyar Nemzetre",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.6, 0.59),
+    xytext=(0.6, 0.67),
     textcoords="axes fraction",
 )
 

@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
+import datetime as dt
+
 import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 z_score = 1.96
 alpha = 1
@@ -40,6 +42,7 @@ sns.set_palette(sns.color_palette(colors))
 sns.lineplot(x="date", y="value", hue="side", style="variable", data=df)
 plt.ylabel("Becsült torzítottság")
 plt.ylim(0.25, 0.75)
+plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2022, 1, 1))
 plt.title(
     "Kormánypárti és ellenzéki képviselők\nfelszólalásainak becsült torzítottsága",
     size=20,

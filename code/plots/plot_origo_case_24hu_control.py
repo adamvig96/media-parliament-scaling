@@ -38,6 +38,7 @@ plt.title("Online hírportálok torzítottsága:\n az origo.hu esete", size=20, 
 plt.ylabel("Becsült torzítottság")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)
+plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2022, 1, 1))
 
 # change of editor
 plt.axvline(dt.datetime(2014, 6, 2), color="#000000")
