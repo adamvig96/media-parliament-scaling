@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from requests import get
 from tqdm import tqdm
+from pathlib import Path
 
 tqdm.pandas()
 
@@ -74,5 +75,7 @@ parldata["text_strip"] = parldata["text_comm"].apply(lambda x: x[0])
 parldata = parldata.filter(
     ["date", "speaker", "speaker_party", "type", "bill_title", "text_strip"]
 )
+
+Path('./data/raw').mkdir(exist_ok=False)
 
 parldata.to_csv("data/raw/parliament_speeches_2010-2020.csv", index=False)
