@@ -35,8 +35,10 @@ parl_text <- read_csv("data/raw/parliament_speeches_2010-2020.csv") %>%
     year = substr(date, 1, 4),
     ym = as.Date(paste(ym, ".01", sep = ""), format = "%Y.%m.%d"),
     quarter = lubridate::quarter(ym, with_year = F),
+    date_origin = date,
     date = zoo::as.yearqtr(paste(year, quarter, sep = "-")),
-    govt_opp_quarter = paste(govt_opp, date, sep = "_")
+    govt_opp_quarter = paste(govt_opp, date, sep = "_"),
+    speech_length = nchar(text),
   ) %>%
   drop_na(govt_opp, text)
 
