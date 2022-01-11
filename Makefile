@@ -5,11 +5,11 @@ SLANT_FIGURES = government_opposition origo_case origo_case_24hu_control magyar_
 DESCRIPTIVES = speeches_descr speeches_by_date
 
 .PHONY: all
-all: $(foreach figure, $(SLANT_FIGURES), figures/slant_estimates_$(figure).png) $(foreach figure, $(DESCRIPTIVES), figures/$(figure).png)
+all: $(foreach figure, $(SLANT_FIGURES), figures/slant_estimates/$(figure).png) $(foreach figure, $(DESCRIPTIVES), figures/descriptives/$(figure).png)
 
 # PARLIAMENT SPEECHES ESTIMATES
 
-figures/slant_estimates_government_opposition.png: code/plots/plot_party_slant.py data/slant_estimates/party_slant_pred.csv
+figures/slant_estimates/government_opposition.png: code/plots/plot_party_slant.py data/slant_estimates/party_slant_pred.csv
 	python3 -b $<
 
 data/slant_estimates/party_slant_pred.csv: code/estimate/predict_party_slant.R data/intermed/parliament_tokens.rds data/intermed/selected_phrases.rds data/intermed/wordscore_fit.rds
@@ -18,7 +18,7 @@ data/slant_estimates/party_slant_pred.csv: code/estimate/predict_party_slant.R d
 
 # MEDIA SLANT ESTIMATES
 
-figures/slant_estimates_%.png: code/plots/plot_%.py code/plots/plot_helper_functions.py $(foreach year, $(YEARS), data/slant_estimates/Q_slant_pred_$(year).csv)
+figures/slant_estimates/%.png: code/plots/plot_%.py code/plots/plot_helper_functions.py $(foreach year, $(YEARS), data/slant_estimates/Q_slant_pred_$(year).csv)
 	python3 -b $<
 
 $(foreach year, $(YEARS), data/slant_estimates/Q_slant_pred_$(year).csv)&: code/estimate/predict_media_slant.R data/intermed/wordscore_fit.rds data/intermed/selected_phrases.rds $(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds) 
