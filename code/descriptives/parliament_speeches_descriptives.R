@@ -5,17 +5,19 @@ library(dplyr)
 library(ggplot2)
 library(scales)
 library(tidyverse)
+library(gridExtra)
+
 
 parl_metadata <- read_csv("data/intermed/parl_text_metadata.csv")
 
-dim(parl_metadata)
-
-length(unique(parl_metadata$speaker))
-
 parl_metadata %>% group_by(govt_opp) %>%
-  summarise(n = n(),
-            speaker_n = length(unique(speaker)),
-            speech_length_mean = mean(speech_length, na.rm = T))
+  summarise(n_speeches = n(),
+            n_speakers = length(unique(speaker))) %>% 
+  pivot_longer(cols = -govt_opp, names_to = 'Fidesz-KDNP-Ellenzék') %>% 
+  pivot_wider(names_from = govt_opp, values_from = value) %>% 
+  mutate(share = government / (opposition + government),
+         sum = government + opposition)
+
 
 p1 <- ggplot(parl_metadata, aes(x = speech_length, color = govt_opp)) +
   geom_histogram(bins=80, fill = "white") + 
@@ -44,14 +46,10 @@ p2 <- ggplot(n_speeches_data, aes(x = N, color = govt_opp)) +
   guides(color = guide_legend(override.aes = list(fill = c("#fd8100", "#001166") ) ) ) +
   theme(legend.title = element_blank())
 
-require(gridExtra)
-grid.arrange(p1, p2, ncol = 2)
-
-
 ggsave(
   "speeches_descr.png",
   arrangeGrob(p1, p2, ncol = 2), 
-  path = "figures/",
+  path = "figures/descriptives/",
   width = 26,
   height = 8,
   units = "cm",
@@ -69,6 +67,8 @@ colnames(dates) <- c('date')
 
 count_plot <- merge(dates, count_plot, by = "date", all.x = T)
 
+mean(count_plot$N, na.rm = T)
+
 ggplot(count_plot, aes(x = date, y = N)) + 
   geom_line(na.rm = T) +
   xlab("") +
@@ -77,7 +77,7 @@ ggplot(count_plot, aes(x = date, y = N)) +
 
 ggsave(
   "speeches_by_date.png",
-  path = "figures/",
+  path = "figures/descriptives/",
   width = 26,
   height = 8,
   units = "cm",
