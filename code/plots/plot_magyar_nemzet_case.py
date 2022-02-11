@@ -14,7 +14,7 @@ from plot_helper_functions import *
 df = execute_formating().loc[
     lambda x: x["site"].isin(["index.hu", "mno.hu", "888.hu", "mno.hu/magyaridok.hu"])
 ]
-figname = "slant_estimates_magyar_nemzet_case.png"
+figname = "slant_estimates/magyar_nemzet_case.png"
 
 plt.figure(figsize=(10, 7))
 sns.set_theme(style="whitegrid")

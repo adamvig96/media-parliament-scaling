@@ -14,7 +14,7 @@ from plot_helper_functions import *
 df = execute_formating().loc[
     lambda x: x["site"].isin(["index.hu", "origo.hu", "888.hu"])
 ]
-figname = "slant_estimates_origo_case.png"
+figname = "slant_estimates/origo_case.png"
 
 
 plt.figure(figsize=(10, 7))

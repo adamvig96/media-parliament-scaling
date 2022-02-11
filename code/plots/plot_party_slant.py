@@ -11,7 +11,7 @@ import seaborn as sns
 
 z_score = 1.96
 alpha = 1
-figname = "slant_estimates_government_opposition.png"
+figname = "slant_estimates/government_opposition.png"
 
 
 df = (
