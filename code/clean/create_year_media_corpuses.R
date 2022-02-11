@@ -11,8 +11,14 @@ media_corpus <- read_csv("data/raw/media_corpus_raw.csv") %>%
   mutate(year = as.factor(substr(ym, 1, 4))) %>%
   mutate(ym = as.Date(paste(ym, "-01", sep = ""))) %>%
   mutate(quarter = lubridate::quarter(ym, with_year = F)) %>%
+  mutate(date_original = date) %>% 
   mutate(date = zoo::as.yearqtr(paste(year, quarter, sep = "-"))) %>%
-  mutate(site_quarter = paste(page, date, sep = "_"))
+  mutate(site_quarter = paste(page, date, sep = "_")) %>% 
+  mutate(article_length = nchar(content))
+
+media_corpus %>% 
+  select(url, date_original, page, article_length) %>% 
+  write_csv("data/intermed/news_article_metadata.csv")
 
 # Create year sample corpuses
 
