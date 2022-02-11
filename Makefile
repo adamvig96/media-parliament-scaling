@@ -40,7 +40,7 @@ data/intermed/wordscore_fit.rds: code/estimate/train_wordscore_model.R data/inte
 data/intermed/selected_phrases.rds: code/clean/create_selected_phrases.R data/intermed/parliament_tokens.rds
 	$(R) $< logs/create_selected_phrases.Rout
 
-data/intermed/parliament_tokens.rds data/intermed/parl_text_metadata.csv&: code/clean/create_parliament_tokens.R data/raw/parliament_speeches_2010-2020.csv data/raw/representatives_names_2014-2020.csv $(STOPWORDS)
+data/intermed/parliament_tokens.rds data/intermed/parl_text_metadata.csv&: code/clean/create_parliament_tokens.R data/raw/parliament_speeches_2010-2020.csv data/raw/representatives_names_2010-2020.csv $(STOPWORDS)
 	$(R) $< logs/create_parliament_tokens.Rout
 
 # IMPORT RAW DATA
@@ -48,5 +48,5 @@ data/intermed/parliament_tokens.rds data/intermed/parl_text_metadata.csv&: code/
 data/raw/parliament_speeches_2010-2020.csv: code/import/download_parliament_speeches.py
 	python3 -b $<
 
-data/raw/representatives_names_2014-2020.csv: code/import/scrape_representative_names.py
+data/raw/representatives_names_2010-2020.csv: code/import/scrape_representative_names.py
 	python3 -b $<
