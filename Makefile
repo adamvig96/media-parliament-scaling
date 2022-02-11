@@ -1,7 +1,7 @@
 R = R CMD BATCH
 STOPWORDS = data/stopwords/stopwords-hu.txt data/stopwords/stopwords-parliament.txt data/stopwords/stopphrases-parliament.txt
 YEARS = $(shell seq 2010 2021)
-SLANT_FIGURES = government_opposition origo_case origo_case_24hu_control magyar_nemzet_case magyar_nemzet_case_24hu_control 
+SLANT_FIGURES = government_opposition origo_case origo_case_24hu_control magyar_nemzet_case magyar_nemzet_case_24hu_control atv_case
 DESCRIPTIVES = speeches_descr speeches_by_date
 
 .PHONY: all
@@ -29,7 +29,7 @@ $(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds)&: code/cle
 
 # DESCRIPTIVES
 
-figures/speeches_by_date.png figures/speeches_descr.png&: code/descriptives/parliament_speeches_descriptives.R data/intermed/parl_text_metadata.csv
+figures/descriptives/speeches_by_date.png figures/descriptives/speeches_descr.png&: code/descriptives/parliament_speeches_descriptives.R data/intermed/parl_text_metadata.csv
 	$(R) $< logs/parliament_speeches_descriptives.Rout
 
 # TRAIN MODEL
@@ -40,10 +40,13 @@ data/intermed/wordscore_fit.rds: code/estimate/train_wordscore_model.R data/inte
 data/intermed/selected_phrases.rds: code/clean/create_selected_phrases.R data/intermed/parliament_tokens.rds
 	$(R) $< logs/create_selected_phrases.Rout
 
-data/intermed/parliament_tokens.rds data/intermed/parl_text_metadata.csv&: code/clean/create_parliament_tokens.R data/raw/parliament_speeches_2010-2020.csv $(STOPWORDS)
+data/intermed/parliament_tokens.rds data/intermed/parl_text_metadata.csv&: code/clean/create_parliament_tokens.R data/raw/parliament_speeches_2010-2020.csv data/raw/representatives_names_2014-2020.csv $(STOPWORDS)
 	$(R) $< logs/create_parliament_tokens.Rout
 
 # IMPORT RAW DATA
 
 data/raw/parliament_speeches_2010-2020.csv: code/import/download_parliament_speeches.py
+	python3 -b $<
+
+data/raw/representatives_names_2014-2020.csv: code/import/scrape_representative_names.py
 	python3 -b $<
