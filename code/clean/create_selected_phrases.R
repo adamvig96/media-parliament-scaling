@@ -47,7 +47,6 @@ selected_ps %>% write_rds("data/intermed/selected_phrases.rds")
 
 
 features_table <- cbind(bigrams, trigrams)
-features_table <- cbind(head(features_table, 60), tail(features_table, 60))
 
 features_table %>% write_xlsx("data/intermed/top_khi_phrases_raw.xlsx")
 
