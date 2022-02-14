@@ -79,9 +79,20 @@ media_corpus_folder = "/Users/adamvig/Dropbox/research/media_corpus/"
             ),
             (
                 pd.read_pickle(media_corpus_folder + "atv_text_2008_202202.pkl")
+                .loc[
+                    lambda x: (x["date"] >= "2010-01-01") & (x["section"] == "belfold")
+                ]
                 .filter(["url", "date", "content"])
-                .loc[lambda x: x["date"] >= "2010-01-01"]
                 .assign(page="atv.hu")
+            ),
+            (
+                pd.read_pickle(media_corpus_folder + "168ora_text_2008-202202.pkl")
+                .loc[
+                    lambda x: (x["date"] >= "2010-01-01")
+                    & (x["section"].isin(["itthon", "penz"]))
+                ]
+                .filter(["url", "date", "content"])
+                .assign(page="168ora.hu")
             ),
         ]
     )
