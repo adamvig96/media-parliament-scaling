@@ -17,7 +17,7 @@ figname = "slant_estimates/atv_case.png"
 
 plt.figure(figsize=(10, 7))
 sns.set_theme(style="whitegrid")
-colors = ["#474755", "#e01164", "red"]
+colors = ["#474755", "#e01164", "#f8343c"]
 sns.set_palette(sns.color_palette(colors))
 
 sns.lineplot(x="date", y="slant", hue="site", style="variable", data=df)
