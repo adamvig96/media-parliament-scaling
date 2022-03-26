@@ -11,30 +11,30 @@ sys.path.append("code/plots")
 
 from plot_helper_functions import *
 
-df = execute_formating().loc[lambda x: x["site"].isin(["24.hu", "atv.hu", "888.hu"])]
-figname = "slant_estimates/atv_case.png"
+df = execute_formating().loc[lambda x: x["site"].isin(["index.hu", "168ora.hu", "888.hu"])]
+figname = "slant_estimates/168ora_case_index_control.png"
 
 
 plt.figure(figsize=(10, 7))
 sns.set_theme(style="whitegrid")
-colors = ["#474755", "#e01164", "#f8343c"]
+colors = ["#d0040c","#e01164", "#f4941c"]
 sns.set_palette(sns.color_palette(colors))
 
 sns.lineplot(x="date", y="slant", hue="site", style="variable", data=df)
 
-nyolcas = mpatches.Patch(color=colors[0], label="24.hu")
+nyolcas = mpatches.Patch(color=colors[0], label="168ora.hu")
 huszonnegy = mpatches.Patch(color=colors[1], label="888.hu")
-atv = mpatches.Patch(color=colors[2], label="atv.hu")
+szazhatvannyolc = mpatches.Patch(color=colors[2], label="index.hu")
 
 plt.legend(
-    handles=[huszonnegy, nyolcas, atv],
+    handles=[huszonnegy, nyolcas, szazhatvannyolc],
     loc=0,
     borderaxespad=1.0,
     frameon=False,
     title=False,
     numpoints=3,
 )
-plt.title("Online hírportálok torzítottsága:\n atv.hu", size=20, y=1.03)
+plt.title("Online hírportálok torzítottsága:\n 168ora.hu", size=20, y=1.03)
 plt.ylabel("Becsült torzítottság")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)

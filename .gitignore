@@ -1,5 +1,8 @@
 data/
 logs/
+*.docx
+paper/
+lit/
 
 .vscode
 *.ipynb

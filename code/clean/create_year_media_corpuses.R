@@ -22,7 +22,7 @@ media_corpus %>%
 
 # Create year sample corpuses
 
-for (year_index in 2010:2021) {
+for (year_index in 2010:2022) {
   year_sample <- media_corpus %>% filter(year == year_index)
   corpus <- corpus(year_sample$content)
   docvars(corpus, "page") <- year_sample$page

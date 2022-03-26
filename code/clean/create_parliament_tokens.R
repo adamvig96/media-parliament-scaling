@@ -38,12 +38,16 @@ parl_text <- read_csv("data/raw/parliament_speeches_2010-2020.csv") %>%
     date_origin = date,
     date = zoo::as.yearqtr(paste(year, quarter, sep = "-")),
     govt_opp_quarter = paste(govt_opp, date, sep = "_"),
-    speech_length = nchar(text),
+    speech_length = nchar(text)
   ) %>%
   drop_na(govt_opp, text)
 
 # drop jobbik here
 parl_text <- parl_text %>% filter(speaker_party != "Jobbik")
+
+# drop parltext with less than 100 characters
+
+parl_text <- parl_text %>% filter(speech_length > 100)
 
 parl_text %>%
   select(-text) %>%
@@ -69,8 +73,7 @@ sphrases <- scan("data/stopwords/stopphrases-parliament.txt", what = "", sep = "
   prep_stopwords()
 
 speaker_names <- rbind(
-  read_csv("data/input/representative_names_2014-2018.csv"),
-  read_csv("data/input/representative_names_2018-2020.csv")
+  read_csv("data/raw/representatives_names_2010-2020.csv")
 )$Név %>%
   tolower() %>%
   prep_stopwords()

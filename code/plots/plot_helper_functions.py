@@ -38,7 +38,7 @@ def detrend_time_series(df):
     )
 
 
-def smooth_time_series(df, alpha=0.35):
+def smooth_time_series(df, alpha=0.4):
     return df.assign(slant=df.groupby("site")["slant"].ewm(alpha=alpha).mean().values)
 
 
@@ -74,7 +74,7 @@ def execute_formating():
     df = (
         df.pipe(format_data)
         #.pipe(detrend_time_series)
-        .pipe(smooth_time_series)
+        #.pipe(smooth_time_series)
         .assign(se=lambda x: np.where(x["se"] > 0.01, 0.01, x["se"]))
         .pipe(melt_data_for_figure)
     )
