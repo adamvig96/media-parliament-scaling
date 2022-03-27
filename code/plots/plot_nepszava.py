@@ -39,9 +39,10 @@ plt.legend(
     frameon=False,
     title=False,
     numpoints=3,
+    prop={'size': 15}
 )
 plt.title("Online hírportálok torzítottsága: Népszava", size=20, y=1.03)
-plt.ylabel("Becsült torzítottság")
+plt.ylabel("Becsült torzítottság",size = 15)
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)
 plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2021, 1, 1))

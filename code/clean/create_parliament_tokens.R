@@ -6,7 +6,15 @@ library(quanteda)
 library(tidyverse)
 library(gofastr)
 
-parl_text <- read_csv("data/raw/parliament_speeches_2010-2020.csv") %>%
+parl_text <- read_csv("data/raw/parliament_speeches_2010-2020.csv")
+
+parl_text %>% group_by(type) %>% 
+  summarise(ntype = n()) %>% 
+  arrange(-ntype) %>% 
+  head(30)
+  
+
+parl_text <- parl_text %>%
   filter(type == "vezérszónoki felszólalás" |
     type == "felszólalás" |
     type == "elhangzik az interpelláció/kérdés/azonnali kérdés" |

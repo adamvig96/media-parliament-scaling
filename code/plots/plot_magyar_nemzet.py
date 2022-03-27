@@ -45,24 +45,24 @@ plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2021, 1, 1))
 # G nap
 plt.axvline(dt.datetime(2015, 2, 6), color="#000000")
 plt.annotate(
-    "G-nap",
+    "Orbán-Simicska\nháború kezdete",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.35, 0.75),
+    xytext=(0.3, 0.73),
     textcoords="axes fraction",
 )
 plt.annotate(
-    "Simicska\n bezár",
+    "Simicska\n kivonul",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.65, 0.15),
+    xytext=(0.65, 0.13),
     textcoords="axes fraction",
 )
 plt.annotate(
     "Magyar Idők nevet vált\nMagyar Nemzetre",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.6, 0.67),
+    xytext=(0.7, 0.7),
     textcoords="axes fraction",
 )
 
