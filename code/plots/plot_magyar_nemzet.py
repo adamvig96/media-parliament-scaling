@@ -14,7 +14,7 @@ from plot_helper_functions import *
 df = execute_formating().loc[
     lambda x: x["site"].isin(["24.hu", "mno.hu", "888.hu", "mno.hu/magyaridok.hu"])
 ]
-figname = "slant_estimates/magyar_nemzet_case_24hu_control.png"
+figname = "slant_estimates/magyar_nemzet.png"
 
 plt.figure(figsize=(10, 7))
 sns.set_theme(style="whitegrid")
@@ -36,11 +36,11 @@ plt.legend(
     title=False,
     numpoints=3,
 )
-plt.title("Online hírportálok torzítottsága:\n a Magyar Nemzet esete", size=20, y=1.03)
+plt.title("Online hírportálok torzítottsága: Magyar Nemzet", size=20, y=1.03)
 plt.ylabel("Becsült torzítottság")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)
-plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2022, 1, 1))
+plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2021, 1, 1))
 
 # G nap
 plt.axvline(dt.datetime(2015, 2, 6), color="#000000")

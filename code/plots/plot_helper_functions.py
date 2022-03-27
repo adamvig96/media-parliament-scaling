@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+
 def format_data(df):
     return (
         df.assign(
@@ -18,6 +19,7 @@ def format_data(df):
                 x["site"],
             )
         )
+        .loc[lambda x: ~((x["date"] < "2013-09-01") & (x["site"] == "nepszava.hu"))]
         .filter(["site", "date", "slant", "se"])
         .sort_values(by=["site", "date"])
     )
@@ -38,7 +40,7 @@ def detrend_time_series(df):
     )
 
 
-def smooth_time_series(df, alpha=0.4):
+def smooth_time_series(df, alpha=0.35):
     return df.assign(slant=df.groupby("site")["slant"].ewm(alpha=alpha).mean().values)
 
 
@@ -73,8 +75,8 @@ def execute_formating():
 
     df = (
         df.pipe(format_data)
-        #.pipe(detrend_time_series)
-        #.pipe(smooth_time_series)
+        # .pipe(detrend_time_series)
+        .pipe(smooth_time_series)
         .assign(se=lambda x: np.where(x["se"] > 0.01, 0.01, x["se"]))
         .pipe(melt_data_for_figure)
     )

@@ -1,7 +1,7 @@
 R = R CMD BATCH
 STOPWORDS = data/stopwords/stopwords-hu.txt data/stopwords/stopwords-parliament.txt data/stopwords/stopphrases-parliament.txt
-YEARS = $(shell seq 2010 2022)
-SLANT_FIGURES = government_opposition origo_case origo_case_24hu_control magyar_nemzet_case magyar_nemzet_case_24hu_control atv_case 168ora_case 168ora_case_index_control
+YEARS = $(shell seq 2010 2021)
+SLANT_FIGURES = government_opposition origo nepszava magyar_nemzet atv controls
 DESCRIPTIVES = speeches_descr speeches_by_date
 
 .PHONY: all
