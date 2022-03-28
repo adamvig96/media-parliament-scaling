@@ -15,7 +15,8 @@ selected_ps <- read_rds("data/intermed/selected_phrases.rds")
 phrase_frequency_table_parliament <- parl_tokens %>%
   tokens_ngrams(n = 2:3) %>%
   tokens_select(pattern = phrase(selected_ps), selection = "keep") %>%
-  dfm()
+  dfm() %>%
+  dfm_tfidf()
 
 # train wordscore model
 tmod_ws <- textmodel_wordscores(phrase_frequency_table_parliament,

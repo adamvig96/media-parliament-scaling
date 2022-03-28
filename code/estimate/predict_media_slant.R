@@ -34,7 +34,8 @@ for (year_index in 2010:2021) {
   rm(corpus)
 
   phrase_frequency_table_media <- dfm(media_tokens) %>%
-    dfm_group(groups = site_quarter)
+    dfm_group(groups = site_quarter) %>%
+        dfm_tfidf()
 
   # predict slant
 

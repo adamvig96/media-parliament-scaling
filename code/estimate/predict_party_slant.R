@@ -17,7 +17,8 @@ phrase_frequency_table_parliament <- parl_tokens %>%
   tokens_ngrams(n = 2:3) %>%
   tokens_select(pattern = phrase(selected_ps), selection = "keep") %>%
   dfm() %>%
-  dfm_group(groups = side_quarter)
+  dfm_group(groups = side_quarter)%>%
+  dfm_tfidf()
 
 pred_ws <- predict(tmod_ws, se.fit = TRUE, newdata = phrase_frequency_table_parliament)
 
