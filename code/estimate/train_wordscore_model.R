@@ -8,7 +8,7 @@ quanteda_options(threads = 8)
 library(tidyverse)
 
 parl_tokens <- read_rds("data/intermed/parliament_tokens.rds")
-selected_ps <- read_rds("data/intermed/selected_phrases.rds")
+selected_ps <- read_rds("data/intermed/selected_top_phrases.rds")
 
 # Create phrase frequencies of selected phrases in parliament text
 

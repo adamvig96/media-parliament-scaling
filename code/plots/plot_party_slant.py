@@ -41,7 +41,7 @@ colors = ["#fd8100", "#001166"]
 sns.set_palette(sns.color_palette(colors))
 sns.lineplot(x="date", y="value", hue="side", style="variable", data=df)
 plt.ylabel("Becsült torzítottság")
-plt.ylim(0.35, 0.75)
+plt.ylim(0.5, 0.6)
 plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2021, 1, 1))
 plt.title(
     "Kormánypárti és ellenzéki képviselők\nfelszólalásainak becsült torzítottsága",

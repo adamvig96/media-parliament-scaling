@@ -20,6 +20,7 @@ def format_data(df):
             )
         )
         .loc[lambda x: ~((x["date"] < "2013-09-01") & (x["site"] == "nepszava.hu"))]
+        .loc[lambda x: ~((x["date"] < "2015-09-01") & (x["site"] == "888.hu"))]
         .filter(["site", "date", "slant", "se"])
         .sort_values(by=["site", "date"])
     )

@@ -11,7 +11,7 @@ library(tidyverse)
 ## proposed model:
 
 tmod_ws <- read_rds("data/intermed/wordscore_fit.rds")
-selected_phrases <- read_rds("data/intermed/selected_phrases.rds")
+selected_phrases <- read_rds("data/intermed/selected_top_phrases.rds")
 
 for (year_index in 2010:2021) {
   corpus <- read_rds(

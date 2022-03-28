@@ -44,7 +44,7 @@ plt.legend(
 plt.title("Online hírportálok torzítottsága: Népszava", size=20, y=1.03)
 plt.ylabel("Becsült torzítottság",size = 15)
 plt.xlabel(None)
-plt.ylim(0.35, 0.75)
+plt.ylim(0.5, 0.6)
 plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2021, 1, 1))
 
 plt.savefig("figures/" + figname, dpi=1000)
