@@ -41,7 +41,8 @@ plt.legend(
     numpoints=3,
     prop={'size': 15}
 )
-plt.title("Online hírportálok torzítottsága: Népszava", size=20, y=1.03)
+#plt.title("Online hírportálok torzítottsága: Népszava", size=20, y=1.03)
+plt.title("Népszava", size=20, y=1.03)
 plt.ylabel("Becsült torzítottság",size = 15)
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)

@@ -33,7 +33,8 @@ plt.legend(
     title=False,
     numpoints=3,
 )
-plt.title("Online hírportálok torzítottsága: origo.hu", size=20, y=1.03)
+plt.title("Origo", size=20, y=1.03)
+#plt.title(None)
 plt.ylabel("Becsült torzítottság")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)

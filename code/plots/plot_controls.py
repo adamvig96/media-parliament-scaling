@@ -44,6 +44,7 @@ plt.legend(
     numpoints=3,
 )
 plt.title("Kontroll online hírportálok torzítottsága", size=20, y=1.03)
+#plt.title(None)
 plt.ylabel("Becsült torzítottság")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)

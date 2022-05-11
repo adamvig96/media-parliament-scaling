@@ -26,7 +26,7 @@ sns.lineplot(x="date", y="slant", hue="site", style="variable", data=df)
 
 huszonnegy = mpatches.Patch(color=colors[0], label="24.hu")
 nyolcas = mpatches.Patch(color=colors[1], label="888.hu")
-mno = mpatches.Patch(color=colors[2], label="mno.hu")
+mno = mpatches.Patch(color=colors[2], label="magyarnemzet.hu")
 
 plt.legend(
     handles=[nyolcas, huszonnegy, mno],
@@ -36,7 +36,8 @@ plt.legend(
     title=False,
     numpoints=3,
 )
-plt.title("Online hírportálok torzítottsága: Magyar Nemzet", size=20, y=1.03)
+plt.title("Magyar Nemzet", size=20, y=1.03)
+#plt.title(None)
 plt.ylabel("Becsült torzítottság")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)
