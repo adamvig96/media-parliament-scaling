@@ -1,7 +1,7 @@
 R = R CMD BATCH
 STOPWORDS = data/stopwords/stopwords-hu.txt data/stopwords/stopwords-parliament.txt data/stopwords/stopphrases-parliament.txt
-YEARS = $(shell seq 2010 2021)
-SLANT_FIGURES = government_opposition origo nepszava magyar_nemzet atv controls
+MEDIA = 168ora 444hu atv magyarhang nepszava 24hu 888hu index mno origo
+SLANT_FIGURES = government_opposition origo magyar_nemzet controls
 DESCRIPTIVES = speeches_descr speeches_by_date
 
 .PHONY: all
@@ -9,7 +9,7 @@ all: $(foreach figure, $(SLANT_FIGURES), figures/slant_estimates/$(figure).png) 
 
 # PARLIAMENT SPEECHES ESTIMATES
 
-figures/slant_estimates/government_opposition.png: code/plots/plot_party_slant.py data/slant_estimates/party_slant_pred.csv
+figures/slant_estimates/government_opposition.png: code/plot/party_slant.py data/slant_estimates/party_slant_pred.csv
 	python3 -b $<
 
 data/slant_estimates/party_slant_pred.csv: code/estimate/predict_party_slant.R data/intermed/parliament_tokens.rds data/intermed/selected_phrases.rds data/intermed/wordscore_fit.rds
@@ -18,14 +18,12 @@ data/slant_estimates/party_slant_pred.csv: code/estimate/predict_party_slant.R d
 
 # MEDIA SLANT ESTIMATES
 
-figures/slant_estimates/%.png: code/plots/plot_%.py code/plots/plot_helper_functions.py $(foreach year, $(YEARS), data/slant_estimates/Q_slant_pred_$(year).csv)
+figures/slant_estimates/%.png: code/plot/%.py code/plot/_helper_functions.py $(foreach media, $(MEDIA), data/slant_estimates/$(media).csv)
 	python3 -b $<
 
-$(foreach year, $(YEARS), data/slant_estimates/Q_slant_pred_$(year).csv)&: code/estimate/predict_media_slant.R data/intermed/wordscore_fit.rds data/intermed/selected_phrases.rds $(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds) 
-	$(R) $< logs/predict_media_slant.Rout
+data/slant_estimates/%.csv: code/estimate/media-slant/%.R data/raw/media-corpus/%.csv code/estimate/media-slant/_helper_functions.R data/intermed/wordscore_fit.rds data/intermed/selected_phrases.rds
+	$(R) $< logs/$*.Rout
 
-$(foreach year, $(YEARS), data/media_corpus/media_corpus_$(year).rds)&: code/clean/create_year_media_corpuses.R data/raw/media_corpus_raw.csv
-	$(R) $< logs/create_year_media_corpuses.Rout
 
 # DESCRIPTIVES
 
