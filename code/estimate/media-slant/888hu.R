@@ -1,3 +1,3 @@
 renv::activate()
-source("code/estimate/predict_media_slant.R")
+source("code/estimate/media-slant/_helper_functions.R")
 estimate_slant("888hu.csv")
