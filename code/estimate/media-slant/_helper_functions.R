@@ -42,7 +42,7 @@ tokenize_corpus <- function(media_coprus, selected_phrases = selected_phrases) {
   ) %>%
     tokens_tolower() %>%
     tokens_wordstem(language = "hu") %>%
-    tokens_ngrams(n = 2:3) %>%
+    tokens_ngrams(n = 2) %>%
     tokens_select(pattern = selected_phrases, selection = "keep")
 
   return(media_tokens)

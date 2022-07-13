@@ -14,7 +14,7 @@ tmod_ws <- read_rds("data/intermed/wordscore_fit.rds")
 # Create phrase frequencies of selected phrases in parliament text
 
 phrase_frequency_table_parliament <- parl_tokens %>%
-  tokens_ngrams(n = 2:3) %>%
+  tokens_ngrams(n = 2) %>%
   tokens_select(pattern = phrase(selected_ps), selection = "keep") %>%
   dfm() %>%
   dfm_group(groups = side_quarter)
