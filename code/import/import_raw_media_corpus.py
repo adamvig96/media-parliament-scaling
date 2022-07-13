@@ -8,6 +8,7 @@ def drop(df):
     return (
         df.drop_duplicates("url")
         .loc[lambda x: x["content"].notnull()]
+        .loc[lambda x: x["content"] != ""]
         .loc[lambda x: ~x["content"].str[:19].str.contains("description")]
     )
 
@@ -84,6 +85,7 @@ output_folder = "data/raw/media-corpus/"
     ]
     .filter(["url", "date", "content"])
     .assign(page="24.hu")
+    .pipe(drop)
 ).to_csv(output_folder + "24hu.csv", index=False)
 
 (
@@ -119,6 +121,7 @@ output_folder = "data/raw/media-corpus/"
     .rename(columns={"body": "content", "article_url": "url"})
     .filter(["url", "date", "content"])
     .assign(page="magyarhang.hu")
+    .loc[lambda x: ~x["date"].isnull()]
     .pipe(drop)
 ).to_csv(output_folder + "magyarhang.csv", index=False)
 
