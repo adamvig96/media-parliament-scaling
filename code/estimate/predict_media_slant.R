@@ -1,5 +1,4 @@
 renv::activate()
-rm(list = ls())
 
 library(dplyr)
 library(ggplot2)
@@ -8,19 +7,34 @@ quanteda_options(threads = 8)
 require(quanteda.textmodels)
 library(tidyverse)
 
-## proposed model:
-
+# Proposed model
 tmod_ws <- read_rds("data/intermed/wordscore_fit.rds")
 selected_phrases <- read_rds("data/intermed/selected_phrases.rds")
 
-for (year_index in 2010:2021) {
-  corpus <- read_rds(
-    paste("data/media_corpus/media_corpus_", as.character(year_index), ".rds",
-      sep = ""
-    )
-  )
+# Functions
+read_raw <- function(portal) {
+  df <- read_csv(paste("data/raw/media-corpus/", portal, sep = "")) %>%
+    mutate(ym = substr(date, 1, 7)) %>%
+    mutate(year = as.factor(substr(ym, 1, 4))) %>%
+    mutate(ym = as.Date(paste(ym, "-01", sep = ""))) %>%
+    mutate(quarter = lubridate::quarter(ym, with_year = F)) %>%
+    mutate(date_original = date) %>%
+    mutate(date = zoo::as.yearqtr(paste(year, quarter, sep = "-"))) %>%
+    mutate(site_quarter = paste(page, date, sep = "_"))
 
-  media_tokens <- tokens(corpus,
+  return(df)
+}
+
+create_corpus <- function(media_df) {
+  corpus <- corpus(media_df$content)
+  docvars(corpus, "page") <- media_df$page
+  docvars(corpus, "site_quarter") <- media_df$site_quarter
+
+  return(corpus)
+}
+
+tokenize_corpus <- function(media_coprus, selected_phrases = selected_phrases) {
+  media_tokens <- tokens(media_coprus,
     remove_punct = T,
     remove_symbols = T,
     remove_numbers = T,
@@ -31,20 +45,35 @@ for (year_index in 2010:2021) {
     tokens_ngrams(n = 2:3) %>%
     tokens_select(pattern = selected_phrases, selection = "keep")
 
-  rm(corpus)
+  return(media_tokens)
+}
 
-  phrase_frequency_table_media <- dfm(media_tokens) %>%
-    dfm_group(groups = site_quarter)
+create_dfm <- function(media_tokens) {
+  return(
+    dfm(media_tokens) %>%
+      dfm_group(groups = site_quarter)
+  )
+}
 
-  # predict slant
-
-  pred_ws <- predict(tmod_ws, se.fit = TRUE, newdata = phrase_frequency_table_media)
+predict_media_slant <- function(media_dfm, model_fit = model_fit) {
+  pred_ws <- predict(model_fit, se.fit = TRUE, newdata = media_dfm)
 
   predicted_slant <- as.data.frame(pred_ws)
   predicted_slant <- cbind(site_quarter = rownames(predicted_slant), predicted_slant)
   rownames(predicted_slant) <- 1:nrow(predicted_slant)
+  predicted_slant$site <- stringr::str_split_fixed(predicted_slant$site_quarter, "_", 2)[, 1]
+  predicted_slant$date <- stringr::str_split_fixed(predicted_slant$site_quarter, "_", 2)[, 2]
+  predicted_slant <- predicted_slant %>%
+    select(c("site", "date", "fit", "se.fit"))
 
-  predicted_slant %>% write_csv(
-    paste("data/slant_estimates/Q_slant_pred_", as.character(year_index), ".csv", sep = "")
-  )
+  return(predicted_slant)
+}
+
+estimate_slant <- function(raw_file) {
+  read_raw(raw_file) %>%
+    create_corpus() %>%
+    tokenize_corpus(selected_phrases = selected_phrases) %>%
+    create_dfm() %>%
+    predict_media_slant(model_fit = tmod_ws) %>%
+    write_csv(paste("data/slant_estimates/", raw_file, sep = ""))
 }
