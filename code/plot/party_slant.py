@@ -40,19 +40,18 @@ sns.set_theme(style="whitegrid")
 colors = ["#fd8100", "#001166"]
 sns.set_palette(sns.color_palette(colors))
 sns.lineplot(x="date", y="value", hue="side", style="variable", data=df)
-plt.ylabel(None)
+plt.ylabel("Estimated bias")
 plt.ylim(0.25, 0.75)
 plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2021, 1, 1))
-# plt.title(
-#   "Kormánypárti és ellenzéki képviselők\nfelszólalásainak becsült torzítottsága",
-#    y=1.03,
-#    size=20,
-# )
-plt.title(None)
+plt.title("Government and opposition bias estimates",
+   y=1.03,
+   size=20,
+)
+#plt.title(None)
 plt.xlabel(None)
 
-govt = mpatches.Patch(color=colors[0], label="Fidesz-KDNP")
-opp = mpatches.Patch(color=colors[1], label="Ellenzék")
+govt = mpatches.Patch(color=colors[0], label="Government")
+opp = mpatches.Patch(color=colors[1], label="Opposition")
 
 plt.legend(
     handles=[govt, opp],

@@ -5,10 +5,7 @@ import pandas as pd
 def format_data(df):
     return (
         df.assign(
-            site=lambda x: x["site_quarter"].str.split("_").str[0],
-            date=lambda x: pd.to_datetime(
-                df["site_quarter"].str.replace(" ", "").str.split("_").str[1]
-            ),
+            date=lambda x: pd.to_datetime(df["date"].str.replace(" ", "")),
             se=lambda x: x["se.fit"],
             slant=lambda x: x["fit"],
         )
@@ -19,24 +16,16 @@ def format_data(df):
                 x["site"],
             )
         )
+        .assign(
+            site=lambda x: np.where(
+                (x["site"] == "origo.hu") & (x["date"] >= "2016-01-01"),
+                "origo.hu-captured",
+                x["site"],
+            )
+        )
         .loc[lambda x: ~((x["date"] < "2013-09-01") & (x["site"] == "nepszava.hu"))]
         .filter(["site", "date", "slant", "se"])
         .sort_values(by=["site", "date"])
-    )
-
-
-def detrend_time_series(df):
-    return (
-        df.merge(
-            df.groupby("date")["slant"]
-            .mean()
-            .reset_index()
-            .rename(columns={"slant": "mean_slant"}),
-            on="date",
-            how="left",
-        )
-        .assign(slant=lambda x: (x["slant"] - x["mean_slant"]) + x["slant"].mean())
-        .drop(["mean_slant"], axis=1)
     )
 
 
@@ -65,17 +54,13 @@ def melt_data_for_figure(df, z_score=1.96):
     )
 
 
-def execute_formating():
+def execute_formating(portals=["24hu", "888hu", "444hu", "atv", "nepszava", "168ora"]):
     df = pd.concat(
-        [
-            pd.read_csv("data/slant_estimates/Q_slant_pred_" + str(year) + ".csv")
-            for year in range(2010, 2022)
-        ]
+        [pd.read_csv("data/slant_estimates/" + file + ".csv") for file in portals]
     ).loc[lambda x: x["se.fit"] != 0]
 
     df = (
         df.pipe(format_data)
-        # .pipe(detrend_time_series)
         .pipe(smooth_time_series)
         .assign(se=lambda x: np.where(x["se"] > 0.01, 0.01, x["se"]))
         .pipe(melt_data_for_figure)

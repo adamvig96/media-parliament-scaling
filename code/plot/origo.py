@@ -7,16 +7,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 warnings.filterwarnings("ignore")
-sys.path.append("code/plots")
+sys.path.append("code/plot/")
 
-from plot_helper_functions import *
+from _helper_functions import *
 
-df = execute_formating().loc[lambda x: x["site"].isin(["24.hu", "origo.hu", "888.hu"])]
+df = execute_formating(portals=["24hu", "origo", "888hu"])
 figname = "slant_estimates/origo.png"
 
 plt.figure(figsize=(10, 7))
 sns.set_theme(style="whitegrid")
-colors = ["#474755", "#e01164", "#011593"]
+colors = ["#474755", "#e01164", "#011593", "#011593"]
 sns.set_palette(sns.color_palette(colors))
 
 sns.lineplot(x="date", y="slant", hue="site", style="variable", data=df)
@@ -35,7 +35,7 @@ plt.legend(
 )
 plt.title("Origo", size=20, y=1.03)
 #plt.title(None)
-plt.ylabel("Becsült torzítottság")
+plt.ylabel("Estimated bias")
 plt.xlabel(None)
 plt.ylim(0.4, 0.65)
 plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2021, 1, 1))
@@ -43,7 +43,7 @@ plt.xlim(dt.datetime(2010, 1, 1), dt.datetime(2021, 1, 1))
 # change of editor
 plt.axvline(dt.datetime(2014, 6, 2), color="#000000")
 plt.annotate(
-    "origo.hu\nszerkesztőváltás",
+    "change of editor",
     xy=(3, 1),
     xycoords="axes fraction",
     xytext=(0.3, 0.15),
@@ -52,10 +52,10 @@ plt.annotate(
     va="center",
 )
 
-# change of owner
+## change of owner
 plt.axvline(dt.datetime(2015, 12, 7), color="#000000")
 plt.annotate(
-    "origo.hu\ntulajdonosváltás",
+    "change of owner",
     xy=(3, 1),
     xycoords="axes fraction",
     xytext=(0.61, 0.15),
