@@ -29,8 +29,8 @@ def format_data(df):
     )
 
 
-def smooth_time_series(df, alpha=0.35):
-    return df.assign(slant=df.groupby("site")["slant"].ewm(alpha=alpha).mean().values)
+def smooth_time_series(df, span=3):
+    return df.assign(slant=df.groupby("site")["slant"].ewm(span=span).mean().values)
 
 
 def melt_data_for_figure(df, z_score=1.96):

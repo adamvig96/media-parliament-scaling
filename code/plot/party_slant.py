@@ -10,7 +10,7 @@ import pandas as pd
 import seaborn as sns
 
 z_score = 1.96
-alpha = 1
+span = 5
 figname = "slant_estimates/government_opposition.png"
 
 
@@ -22,7 +22,7 @@ df = (
             x["party_quarter"].str.replace(" ", "").str.split("_").str[1]
         ),
         se=lambda x: x["se.fit"],
-        slant=lambda x: x.groupby("side")["fit"].ewm(alpha=alpha).mean().values,
+        slant=lambda x: x.groupby("side")["fit"].ewm(span=span).mean().values,
         ci_lower=lambda x: x["slant"] - z_score * x["se"],
         ci_upper=lambda x: x["slant"] + z_score * x["se"],
     )

@@ -56,17 +56,17 @@ create_dfm <- function(media_tokens) {
 }
 
 predict_media_slant <- function(media_dfm, model_fit = model_fit) {
-  pred_ws <- predict(model_fit, se.fit = TRUE, newdata = media_dfm)
+  pred <- predict(model_fit, se.fit = TRUE, newdata = media_dfm)
 
-  predicted_slant <- as.data.frame(pred_ws)
-  predicted_slant <- cbind(site_quarter = rownames(predicted_slant), predicted_slant)
-  rownames(predicted_slant) <- 1:nrow(predicted_slant)
-  predicted_slant$site <- stringr::str_split_fixed(predicted_slant$site_quarter, "_", 2)[, 1]
-  predicted_slant$date <- stringr::str_split_fixed(predicted_slant$site_quarter, "_", 2)[, 2]
-  predicted_slant <- predicted_slant %>%
+  pred <- as.data.frame(pred)
+  pred <- cbind(site_quarter = rownames(pred), pred)
+  rownames(pred) <- 1:nrow(pred)
+  pred$site <- stringr::str_split_fixed(pred$site_quarter, "_", 2)[, 1]
+  pred$date <- stringr::str_split_fixed(pred$site_quarter, "_", 2)[, 2]
+  pred <- pred %>%
     select(c("site", "date", "fit", "se.fit"))
 
-  return(predicted_slant)
+  return(pred)
 }
 
 estimate_slant <- function(raw_file) {

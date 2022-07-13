@@ -3,6 +3,7 @@ logs/
 *.docx
 paper/
 lit/
+AdamVig-nlp-final-project alias
 
 .vscode
 *.ipynb
