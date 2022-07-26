@@ -51,7 +51,7 @@ plt.annotate(
     "change of editor",
     xy=(3, 1),
     xycoords="axes fraction",
-    xytext=(0.3, 0.15),
+    xytext=(0.7, 0.15),
     textcoords="axes fraction",
     ha="center",
     va="center",
