@@ -23,6 +23,13 @@ def format_data(df):
                 x["site"],
             )
         )
+        .assign(
+            site=lambda x: np.where(
+                (x["site"] == "index.hu") & (x["date"] >= "2020-08-01"),
+                "index.hu-captured",
+                x["site"],
+            )
+        )
         .loc[lambda x: ~((x["date"] < "2013-09-01") & (x["site"] == "nepszava.hu"))]
         .filter(["site", "date", "slant", "se"])
         .sort_values(by=["site", "date"])
@@ -65,4 +72,6 @@ def execute_formating(portals=["24hu", "888hu", "444hu", "atv", "nepszava", "168
         .assign(se=lambda x: np.where(x["se"] > 0.01, 0.01, x["se"]))
         .pipe(melt_data_for_figure)
     )
+
+    df.to_csv("data/slant_estimates/merged.csv", index=False)
     return df
