@@ -58,4 +58,4 @@ plt.annotate(
 )
 
 
-plt.savefig("figures/" + figname, dpi=1000)
+plt.savefig("figures/" + figname, dpi=100)
