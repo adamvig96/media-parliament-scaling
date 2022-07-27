@@ -1,7 +1,7 @@
 R = R CMD BATCH
 STOPWORDS = data/stopwords/stopwords-hu.txt data/stopwords/stopwords-parliament.txt data/stopwords/stopphrases-parliament.txt
 MEDIA = 168ora 444hu atv magyarhang nepszava 24hu 888hu index mno origo
-SLANT_FIGURES = government_opposition origo magyar_nemzet index controls
+SLANT_FIGURES = government_opposition origo magyar_nemzet index controls index_origo
 DESCRIPTIVES = speeches_descr speeches_by_date
 
 .PHONY: all
